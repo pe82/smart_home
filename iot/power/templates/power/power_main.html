@@ -1,0 +1,14 @@
+<html>
+<head><title>Power Management</title></head>
+<body>
+
+<b>Select system(s) to enable/disable:</b><br />
+
+<form action={% url 'enabler' method='post'>
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type='submit' value='submit' />
+</form>
+
+</body>
+</html>
