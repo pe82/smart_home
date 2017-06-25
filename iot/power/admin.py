@@ -1,3 +1,6 @@
 from django.contrib import admin
+from .models import PowerThings
 
-# Register your models here.
+@admin.register(PowerThings)
+class PowerThingsAdmin(admin.ModelAdmin):
+    pass 

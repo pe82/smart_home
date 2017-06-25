@@ -1,12 +1,11 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.template import loader
-from forms import *
+from power.forms import *
 import RPi.GPIO as GPIO
 
 def index(request):
-    template = loader.get_template('power/index.html')
-    return HttpResponse(template.render(request))
+    return render(request, 'power/index.html')
 
 def power_main(request):
     template = loader.get_template('power/power_main.html')
@@ -25,7 +24,7 @@ def enabler(request):
         last = PowerThings.objects.count()
         if last > 0:
             pt_last = PowerThings.objects.get(pk=last)
-            pt = PowerThingsForm(initial={"light1":checks, "light2":checks, "toaster":checks, "nuclearDefenseSystem":checks})
+            pt = PowerThingsForm(initial={"light1":checks, "light2":checks, "light3":checks, "light4":checks})
             
         
  
@@ -35,20 +34,20 @@ def enabler(request):
         if form.is_valid():
             light1 = form.cleaned_data["light1"]
             light2 = form.cleaned_data["light2"]
-            toaster = form.cleaned_data["toaster"]
-            nuclearDefenseSystem = form.cleaned_data["nuclearDefenseSystem"]
+            light3 = form.cleaned_data["light3"]
+            light4 = form.cleaned_data["light4"]
             
             pt = PowerThings()
             pt.light1 = light1
             pt.light2 = light2
-            pt.toaster = toaster
-            pt.nuclearDefenseSystem = nuclearDefenseSystem
+            pt.light3 = light3
+            pt.light4 = light4
             pt.save()
             
             turn_on_off("light1", light1) 
             turn_on_off("light2", light2)
-            turn_on_off("toaster", toaster)
-            turn_on_off("nuclearDefenseSystem", nuclearDefenseSystem)
+            turn_on_off("light3", light3)
+            turn_on_off("light4", light4)
 
     context = {
         'request': request,
@@ -67,11 +66,11 @@ def turn_on_off(device, on_mode):
     if device == "light1":
     	device_pin = 17
     elif device == "light2":
-        device_pin = 27
-    elif device == "toaster":
-        device_pin = 22
-    elif device == "nuclearDefenseSystem":
         device_pin = 23
+    elif device == "light3":
+        device_pin = 27
+    elif device == "light4":
+        device_pin = 22
     else:
         return 
     
@@ -81,5 +80,5 @@ def turn_on_off(device, on_mode):
     GPIO.setup(device_pin, GPIO.OUT)
 
     GPIO.output(device_pin, on_off)
-    print "Device:", device, ", Status:", on_mode
+    print ("Device:", device, ", Status:", on_mode)
 
